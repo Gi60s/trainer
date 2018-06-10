@@ -1,11 +1,11 @@
 <template>
  <div>
-   <lesson-edit :lesson-id="$route.params.lessonId"></lesson-edit>
+   <lesson-edit></lesson-edit>
  </div>
 </template>
 
 <script>
-  import { site as defaults } from '~~/config';
+  import { site as defaults } from '~~/config'
   import lessonEdit from '~/components/lesson-edit'
 
   export default {
