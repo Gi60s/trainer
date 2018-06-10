@@ -16,6 +16,14 @@
  **/
 'use strict'
 
+export function debounce(callback, delay) {
+  let timeoutId
+  return function() {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(callback, delay)
+  }
+}
+
 export function deepCopy(obj) {
   const map = arguments[1] || new WeakMap()
   const prev = map.get(obj)
