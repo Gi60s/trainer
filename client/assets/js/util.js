@@ -16,6 +16,12 @@
  **/
 'use strict'
 
+const rxPageSplit = /^\s*={2,}$/m
+const rxPageTitle = /^\s*#{1,}\s*(.*)$/m
+const rxSectionSplit = /^\s*-{2,}$/m
+
+
+
 export function deepCopy(obj) {
   const map = arguments[1] || new WeakMap()
   const prev = map.get(obj)
@@ -36,5 +42,31 @@ export function deepCopy(obj) {
     return result
   } else {
     return obj
+  }
+}
+
+export function parseLessonContent(content) {
+  const titles = []
+
+  const pages = content
+    .split(rxPageSplit)
+    .map((s, index) => {
+      const match = rxPageTitle.exec(s)
+      const title = match ? match[1] : 'Page ' + (index + 1)
+      titles.push(title)
+
+      const sections = s.trim()
+        .split(rxSectionSplit)
+        .map(v => v.trim())
+
+      return {
+        title,
+        sections
+      }
+    })
+
+  return {
+    titles,
+    pages
   }
 }
