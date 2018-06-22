@@ -1,0 +1,57 @@
+version: '3'
+services:
+#  app:
+#    image: node:8
+#    restart: always
+#    networks:
+#      - trainer
+#    ports:
+#      - 8081:8080
+#    volumes:
+#      - ./backend/node/:/usr/app
+#    depends_on:
+#      - db
+#    environment:
+#      PGHOST: db
+#      PGPORT: 5432
+#      PGUSER: app
+#      PGPASSWORD: RocketM4n
+#      PGDATABASE: rockets
+#
+#  ui:
+#    build:
+#      context: ./ui
+#    networks:
+#      - trainer
+#    ports:
+#      - 8080:8080
+#    volumes:
+#      - ./ui/:/usr/app
+#    depends_on:
+#      - backend
+#    environment:
+#      BACKEND_URL: http://backend:8081
+
+  db:
+    image: mysql:5
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlpass
+      MYSQL_DATABASE: it410
+    ports:
+      -3306:3306
+    networks:
+      - trainer
+    volumes:
+      - ./db/sql/:/var/lib/mysql
+
+  adminer:
+    restart: always
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+networks:
+  trainer:
