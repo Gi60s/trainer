@@ -27,7 +27,17 @@
       return null;
     },
 
+    mounted() {
+      // this.$store.commit('trainer/lessonUpdate', {
+      //   title: '',
+      //   tags: [],
+      //   content: '# Lesson Editor\n\nUse -- to create a section break\n\nUse == to create a page break'
+      // })
+    },
+
     data() {
+      // perform ajax request to load selected lesson
+      console.log(this.$rou)
       return {
         store: ''
       }

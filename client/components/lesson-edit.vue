@@ -1,12 +1,37 @@
 <template>
   <div class="lesson-edit">
     <div class="buttons">
-      <v-btn color="secondary" ><v-icon>settings</v-icon> Settings</v-btn>
-      <v-btn color="accent" :disabled="!changed" @click="save()"><v-icon>save</v-icon> Save</v-btn>
+      <v-dialog v-model="dialog">
+        <v-btn color="secondary" slot="activator"><v-icon>settings</v-icon> Settings</v-btn>
+        <v-card>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <v-flex xs12>
+                  <v-text-field v-model="title" label="Title" required></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field v-model="description" label="Description"></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <tags-input :tags="tags" v-on:tags-changed="updateTags"></tags-input>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="secondary" @click.native="dialog = false">Edit Content</v-btn>
+            <v-btn color="accent" :disabled="!modified" @click="save(); dialog=false"><v-icon>save</v-icon> Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-btn color="accent" :disabled="!modified" @click="save()"><v-icon>save</v-icon> Save</v-btn>
     </div>
     <div class="editor">
       <!--<textarea :value="input" @input="update"></textarea>-->
-      <ace-editor class="ace-editor" language="markdown" v-on:update="update"></ace-editor>
+      <ace-editor class="ace-editor" language="markdown" :content="content" v-on:update="update"></ace-editor>
       <div class="preview">
         <div class="preview-nav" v-if="pages.length">
           <v-btn color="secondary" :disabled="pageIndex === 0" @click="pageIndex--"><v-icon>chevron_left</v-icon></v-btn>
@@ -29,12 +54,10 @@
 <script>
   import _ from 'lodash'
   import aceEditor from './ace-editor'
-  import lessonEdit from '~/components/lesson-edit'
   import marked from 'marked'
+  import tagsInput from './tags-input'
+  import { parseLessonContent } from '~/assets/js/util'
 
-  const rxPageSplit = /^={2,}$/m
-  const rxPageTitle = /^#{1,}\s*(.*)$/m
-  const rxSectionSplit = /^-{2,}$/m
   const sectionBreak = `<div style='border-bottom: 1px solid #333; text-align: center; height: 1px; margin: 10px 0;'>
     <div style="display: inline-block; background: #FFF; transform: translateY(-50%); padding: 0 10px;">Section Break</div>
   </div>`
@@ -43,70 +66,86 @@
 
     components: {
       'ace-editor': aceEditor,
-      'lesson-edit': lessonEdit
-    },
-
-    props: {
-      content: {
-        type: String,
-        default: ''
-      }
+      'tags-input': tagsInput
     },
 
     data() {
+      const lesson = this.$store.state.lessons.current
       return {
-        initial: '',
-        input: '',
+        content: lesson.content,
+        description: lesson.description,
+        dialog: false,
+        id: lesson.id,
+        init: {
+          content: lesson.content,
+          description: lesson.description,
+          tags: lesson.tags.join(','),
+          title: lesson.title
+        },
         pages: [],
         pageIndex: 0,
-        section: 0
+        tags: lesson.tags,
+        title: lesson.title
       }
     },
 
     computed: {
-      changed() {
-        return this.initial !== this.input;
-      },
 
       compiledMarkdown() {
-        if (this.pages.length && this.input) {
+        if (this.pages.length && this.content) {
           const page = this.pages[this.pageIndex]
-          const v = page.map(s => marked(s, { sanitize: false }))
+          const v = page.sections.map(s => marked(s, { sanitize: false }))
             .join(sectionBreak)
           return v
         } else {
           return ''
         }
+      },
+
+      modified() {
+        const init = this.init
+        return init.content !== this.content ||
+          init.description !== this.description ||
+          init.title !== this.title ||
+          init.tags !== this.tags.join(',')
       }
     },
 
     mounted() {
-      this.initial = this.content;
+      this.update(this.$store.state.lessons.current.content)
     },
 
     methods: {
+      debouncedUpdate: _.debounce(function() {
+        this.update(this.content)
+      }, 300),
+
       save() {
-        this.$emit('save', this.input)
+        this.$store.dispatch('lessons/save', {
+          content: this.content,
+          description: this.description,
+          id: this.id,
+          tags: this.tags,
+          title: this.title
+        });
       },
 
-      update: _.debounce(function(value) {
-        const pageTitles = []
+      update(value) {
+        const data = parseLessonContent(value)
+        this.content = value
+        this.pages = data.pages
+        this.pageTitles = data.titles
 
-        this.input = value
+        // make sure the current page is not outside the number of pages
+        const length = this.pages.length
+        if (this.pageIndex >= length) {
+          this.pageIndex = length ? length - 1 : 0
+        }
+      },
 
-        this.pages = value
-          .split(rxPageSplit)
-          .map((s, index) => {
-            const match = rxPageTitle.exec(s)
-            pageTitles.push(match ? match[1] : 'Page ' + (index + 1))
-
-            return s.trim()
-              .split(rxSectionSplit)
-              .map(v => v.trim())
-          })
-
-        this.pageTitles = pageTitles
-      }, 300)
+      updateTags(tags) {
+        this.tags = tags
+      }
     }
 
   }
