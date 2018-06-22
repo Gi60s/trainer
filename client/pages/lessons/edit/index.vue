@@ -1,5 +1,5 @@
 <template>
- <div>
+ <div class="fill-area">
    <lesson-edit :store="store"></lesson-edit>
  </div>
 </template>
@@ -28,7 +28,9 @@
     },
 
     data() {
-      return {}
+      return {
+        store: ''
+      }
     }
 
   }

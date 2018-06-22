@@ -1,5 +1,5 @@
 <template>
- <div>
+ <div class="area">
    <lesson-edit></lesson-edit>
  </div>
 </template>

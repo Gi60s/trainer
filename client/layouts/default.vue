@@ -35,11 +35,9 @@
 
         </byu-header>
 
-        <div id="page-content">
-            <v-app>
-                <nuxt />
-            </v-app>
-        </div>
+        <v-app id="page-content">
+            <nuxt />
+        </v-app>
 
         <byu-footer></byu-footer>
     </div>

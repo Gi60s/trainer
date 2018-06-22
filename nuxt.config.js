@@ -21,54 +21,55 @@ const title     = require('./config').site.title;
 
 const config = {
 
-    // the source directories
-    rootDir: __dirname,
-    srcDir: path.resolve(__dirname, 'client'),
+  // the source directories
+  rootDir: __dirname,
+  srcDir: path.resolve(__dirname, 'client'),
 
-    // page headers
-    head: {
-        title: title,
-        meta: [
-            { charset: 'utf-8' },
-            { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-            { hid: 'description', name: 'description', content: pkg.description }
-        ],
-        link: [
-            { rel: 'icon', type: 'image/x-icon', href: '//cdn.byu.edu/shared-icons/latest/favicons/favicon.ico' },
-            { rel: 'stylesheet', href: 'https://cloud.typography.com/75214/6517752/css/fonts.css' },
-            { rel: 'stylesheet', href: 'https://cdn.byu.edu/byu-theme-components/latest/byu-theme-components.min.css' }
-        ],
-        script: [
-            { src: '/__wabs/script.js' },
-            { src: 'https://cdn.byu.edu/byu-theme-components/latest/byu-theme-components.min.js' }
-        ]
+  // page headers
+  head: {
+    title: title,
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: pkg.description }
+    ],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '//cdn.byu.edu/shared-icons/latest/favicons/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://cloud.typography.com/75214/6517752/css/fonts.css' },
+      { rel: 'stylesheet', href: 'https://cdn.byu.edu/byu-theme-components/latest/byu-theme-components.min.css' }
+    ],
+    script: [
+      { src: '/__wabs/script.js' },
+      { src: 'https://cdn.byu.edu/byu-theme-components/latest/byu-theme-components.min.js' }
+    ]
+  },
+
+  // global CSS
+  css: [
+    '~/assets/css/main.styl',
+    '~/assets/css/trainer.styl'
+  ],
+
+  // plugins to run before app initialization
+  plugins: [
+    { src: '~/plugins/byu', ssr: true },
+    { src: '~/plugins/vuetify', ssr: true },
+    { src: '~/plugins/wabs', ssr: false },
+    { src: '~/plugins/ace', ssr: false }
+  ],
+
+  // nuxt build configuration
+  build: {
+
+    // extend webpack configuration
+    extend (config, { isDev, isClient, isServer }) {
+      if (isClient) config.devtool = isDev ? 'eval-source-map' : 'source-map'
     },
 
-    // global CSS
-    css: [
-        '~/assets/css/main.styl',
-        '~/assets/css/trainer.styl'
-    ],
-
-    // plugins to run before app initialization
-    plugins: [
-        { src: '~/plugins/byu', ssr: true },
-        { src: '~/plugins/vuetify', ssr: true },
-        { src: '~/plugins/wabs', ssr: false }
-    ],
-
-    // nuxt build configuration
-    build: {
-
-        // extend webpack configuration
-        extend (config, { isDev, isClient, isServer }) {
-            if (isClient) config.devtool = isDev ? 'eval-source-map' : 'source-map'
-        },
-
-        vendor: [
-            'axios',  // add axios globally
-        ]
-    }
+    vendor: [
+      'axios',  // add axios globally
+    ]
+  }
 };
 
 module.exports = config;

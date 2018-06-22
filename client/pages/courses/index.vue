@@ -34,7 +34,7 @@
 
     methods: {
       edit(id) {
-        this.$router.push('/lessons/edit/' + id)
+        this.$router.push('/courses/edit/' + id)
       }
     }
 

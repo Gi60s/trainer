@@ -1,7 +1,7 @@
 <template>
   <section>
     <p>
-      <v-btn color="primary">
+      <v-btn color="primary" @click="edit('')">
         <v-icon>add_circle</v-icon>
         Create a Lesson
       </v-btn>
@@ -25,6 +25,12 @@
     // overwrite default page search
     pageSearch ({ to, from, previous }) {
       return null;
+    },
+
+    methods: {
+      edit(id) {
+        this.$router.push('/lessons/edit/' + id)
+      }
     }
 
 
