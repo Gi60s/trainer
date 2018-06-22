@@ -82,8 +82,7 @@
     },
 
     data() {
-      const course = this.$store.state.trainer.courses[this.courseId]
-      console.log(this.$store.state.trainer, this.courseId, course);
+      const course = this.$store.state.courses.active
 
       const result = {
         valid: false,
