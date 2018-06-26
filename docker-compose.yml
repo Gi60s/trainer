@@ -39,7 +39,7 @@ services:
       MYSQL_ROOT_PASSWORD: mysqlpass
       MYSQL_DATABASE: it410
     ports:
-      -3306:3306
+      - 3306:3306
     networks:
       - trainer
     volumes:

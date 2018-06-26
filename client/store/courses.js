@@ -21,6 +21,7 @@ export const state = () => ({
   current: {
     id: 'awd',
     title: 'Advanced Web Development',
+    description: 'Learn how to build a web app',
     discoverability: 'public',
     guided: 'both',
     materials: [
