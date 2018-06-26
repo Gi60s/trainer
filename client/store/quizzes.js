@@ -18,6 +18,28 @@
 
 // export state as a function
 export const state = () => ({
+  current: {
+    id: 'into',
+    title: 'Follow up quiz for JavaScript intro',
+    description: '',
+    questions: [
+      {
+        type: 'select',
+        multiple: false,
+        prompt: 'What is the answer?',
+        choices: [
+          {
+            answer: 'Answer 1',
+            value: 0
+          },
+          {
+            answer: 'Answer 2',
+            value: 1
+          }
+        ]
+      }
+    ]
+  },
   list: {
     'intro': { id: 'intro', title: 'Follow up quiz for JavaScript intro', description: '' }
   }
