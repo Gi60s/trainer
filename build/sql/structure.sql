@@ -44,6 +44,7 @@ CREATE TABLE `courses` (
   `description` text NOT NULL,
   `discoverability` varchar(10) NOT NULL,
   `guided` varchar(10) NOT NULL,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `title` (`title`),
   KEY `discoverability` (`discoverability`)
@@ -58,13 +59,14 @@ DROP TABLE IF EXISTS `lessons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lessons` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(45) NOT NULL,
   `description` text NOT NULL,
   `content` mediumtext NOT NULL,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `title` (`title`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,11 +78,11 @@ DROP TABLE IF EXISTS `tags`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tags` (
   `tag` varchar(45) NOT NULL,
-  `table` varchar(45) NOT NULL,
+  `tableName` varchar(45) NOT NULL,
   `rowId` int(11) NOT NULL,
   KEY `tag` (`tag`),
-  KEY `table` (`table`),
-  KEY `tag-table` (`table`,`tag`)
+  KEY `table` (`tableName`),
+  KEY `tag-table` (`tableName`,`tag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -93,4 +95,4 @@ CREATE TABLE `tags` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-26 17:26:13
+-- Dump completed on 2018-07-05 17:56:53
