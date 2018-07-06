@@ -19,10 +19,15 @@ function database(config) {
   const pool = mysql.createPool(config)
   const database = { pool }
 
+  database.close = function() {
+    return pool.end()
+  }
+
   database.connection = async function() {
     const factory = {}
     factory.conn = await pool.getConnection()
-    factory.release = factory.conn.release
+    factory.query = factory.conn.query.bind(factory.conn)
+    factory.release = factory.conn.release.bind(factory.conn)
 
     // populate this factory with all database library operations
     Object.keys(libraries)
