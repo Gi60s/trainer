@@ -9,7 +9,7 @@ exports.delete = async function(conn, table, rowId) {
  * @param {object} conn
  * @param {string[]} tags All tags must match.
  * @param {string[]} tables Gets results for all tables listed.
- * @returns {object<string, {}>}
+ * @returns {object<string, array<{ id:number, title:string, description:string, timestamp:number}>>} A map of table names with each value an array of objects.
  */
 exports.filter = async function(conn, tags, tables) {
   if (!tags || tags.length === 0) return []
@@ -17,8 +17,8 @@ exports.filter = async function(conn, tags, tables) {
 
   // find all table names and row ids that match the query
   const query = 'SELECT tableName, rowId FROM tags WHERE ' +
+    (tables.length ? 'tableName in (' + tables.map(() => '?').join(', ') + ') AND ' : '') +
     'tags in (' + tags.map(() => '?, ') + ') ' +
-    (tables.length ? ' AND tableName in (' + tables.map(() => '?').join(', ') + ')' : '') +
     'GROUP BY tableName, rowId' +
     'HAVING COUNT(tag) = ' + tags.length
   const matches = await conn.query(query, [].concat(tags, tables))
