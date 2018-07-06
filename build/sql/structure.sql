@@ -80,6 +80,7 @@ CREATE TABLE `tags` (
   `tag` varchar(45) NOT NULL,
   `tableName` varchar(45) NOT NULL,
   `rowId` int(11) NOT NULL,
+  PRIMARY KEY (`tableName`, `tag`, `rowId`),
   KEY `tag` (`tag`),
   KEY `table` (`tableName`),
   KEY `tag-table` (`tableName`,`tag`)
