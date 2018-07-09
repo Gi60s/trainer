@@ -15,10 +15,36 @@
  *    limitations under the License.
  **/
 'use strict';
-const Router        = require('express').Router;
+const Database      = require('../database')
+const Router        = require('express').Router
 
-const router = new Router();
-module.exports = router;
+const router = new Router()
+module.exports = router
+
+const database = Database({
+  connectionLimit : 50,
+  host            : 'db',
+  user            : 'root',
+  password        : 'mysqlpass',
+  database        : 'it410'
+})
+
+// all api request get a reference to the database api and a connection
+router.use(async (req, res, next) => {
+  const conn = await database.transaction()
+  req.db = database
+  req.dbConn = conn
+
+  async function commit() {
+    await conn.commit()
+    conn.close()
+  }
+
+  res.on('end', commit)
+  res.on('finish', commit)
+
+  next()
+})
 
 // add other routers here, for example:
 // router.use('/users', require('./users'));
