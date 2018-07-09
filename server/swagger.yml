@@ -1,0 +1,179 @@
+openapi: "3.0.0"
+info:
+  description: "Training application API"
+  version: "1.0.0"
+  title: "Traning"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+- name: "lessons"
+- name: "courses"
+paths:
+  /course:
+    x-controller: courses
+    put:
+      x-operation: set
+      tags:
+        - courses
+      description: Save a course
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        200:
+          description: 'Course saved'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        201:
+          description: 'Course created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        401:
+          description: 'Unauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Not found'
+  /lessons:
+    x-controller: lessons
+    put:
+      x-operation: set
+      tags:
+        - lessons
+      description: Save a lesson
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+      responses:
+        200:
+          description: 'Lesson saved'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        201:
+          description: 'Lesson created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        401:
+          description: 'Unauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Not found'
+  /lessons/:id:
+    x-controller: lessons
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      x-operation: get
+      tags:
+        - lessons
+      description: Get a specific lesson
+      responses:
+        200:
+          description: 'Retrieved lesson'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+        401:
+          description: 'Unauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Not found'
+    delete:
+      x-operation: delete
+      tags:
+        - lessons
+      description: Get a specific lesson
+      responses:
+        204:
+          description: 'No content'
+        401:
+          description: 'Unauthorized'
+        403:
+          description: 'Forbidden'
+        404:
+          description: 'Not found'
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: number
+        minimum: 1
+  schemas:
+    Course:
+      type: object
+      properties:
+        id:
+          type: number
+          x-variable: id
+        title:
+          type: string
+          x-variable: title
+        description:
+          type: string
+          x-variable: description
+        discoverability:
+          type: string
+          enum:
+            - private
+            - link
+            - public
+        guided:
+          type: string
+          enum:
+            - self
+            - instructor
+            - both
+        lessons:
+          readOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Lesson'
+        updated:
+          type: string
+          format: date-time
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: number
+          x-variable: id
+        title:
+          type: string
+          x-variable: title
+        description:
+          type: string
+          default: ''
+          x-variable: description
+        content:
+          type: string
+          default: ''
+          x-variable: content
+        tags:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+          default: []
+          x-variable: tags
+        updated:
+          type: string
+          format: date-time
