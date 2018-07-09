@@ -13,8 +13,14 @@ exports.delete = async function(conn, id) {
 }
 
 exports.get = async function(conn, id) {
-  const { results } = await conn.query('SELECT * FROM lessons WHERE id = ?', [id] )
-  return results[0] || null
+  const lessonResults = conn.query('SELECT * FROM lessons WHERE id = ?', [id] )
+  const tagsResults = this.tags.get('lessons', id)
+  const results = await Promise.all(lessonResults, tagsResults)
+
+  const lesson = results[0][0] || null
+  if (lesson) lesson.tags = results[1]
+
+  return lesson
 }
 
 exports.search = async function(conn, term) {
