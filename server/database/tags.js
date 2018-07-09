@@ -70,11 +70,14 @@ exports.set = async function(conn, tags, table, rowId) {
  * Get a list of all tags
  * @param {object} conn
  * @param {string} [table]
+ * @param {number} [id]
  * @returns {Promise<*>}
  */
-exports.tags = async function(conn, table) {
-  const query = 'SELECT DISTINCT tag FROM tags' + (table ? ' WHERE table = ?' : '')
-  const { results } = await conn.query(query, [ table ])
+exports.tags = async function(conn, table, id) {
+  const query = 'SELECT DISTINCT tag FROM tags' +
+    (table ? ' WHERE table = ?' : '') +
+    (id ? ' AND rowId = ?' : '')
+  const { results } = await conn.query(query, [ table, id ])
   return results
 }
 
