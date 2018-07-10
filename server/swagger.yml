@@ -7,8 +7,8 @@ info:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
-- name: "lessons"
 - name: "courses"
+- name: "lessons"
 paths:
   /course:
     x-controller: courses
@@ -72,10 +72,10 @@ paths:
           description: 'Forbidden'
         404:
           description: 'Not found'
-  /lessons/:id:
+  /lessons/:lessonId:
     x-controller: lessons
     parameters:
-      - $ref: '#/components/parameters/Id'
+      - $ref: '#/components/parameters/lessonId'
     get:
       x-operation: get
       tags:
@@ -110,8 +110,8 @@ paths:
           description: 'Not found'
 components:
   parameters:
-    Id:
-      name: id
+    lessonId:
+      name: lessonId
       in: path
       required: true
       schema:
