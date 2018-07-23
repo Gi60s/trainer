@@ -1,14 +1,29 @@
 'use strict'
 
 exports.delete = async function(conn, table, rowId) {
-  await conn.query('DELETE FROM tags WHERE table = ? AND rowId = ?', [table, rowId])
+  await conn.query('DELETE FROM tags WHERE tableName = ? AND rowId = ?', [table, rowId])
+}
+
+/**
+ * Get a list of all tags
+ * @param {object} conn
+ * @param {string} [table]
+ * @param {number} [id]
+ * @returns {Promise<string[]>}
+ */
+exports.get = async function(conn, table, id) {
+  const query = 'SELECT DISTINCT tag FROM tags' +
+    (table ? ' WHERE tableName = ?' : '') +
+    (id ? ' AND rowId = ?' : '')
+  const [ rows ] = await conn.query(query, [ table, id ])
+  return rows.map(row => row.tag)
 }
 
 /**
  * Get the table and row id for each item that matches one table with all tags.
  * @param {object} conn
  * @param {string[]} tags All tags must match.
- * @param {string[]} tables Gets results for all tables listed.
+ * @param {string[]} [tables] Gets results for all tables listed.
  * @returns {object<string, array<{ id:number, title:string, description:string, timestamp:number}>>} A map of table names with each value an array of objects.
  */
 exports.filter = async function(conn, tags, tables) {
@@ -18,14 +33,14 @@ exports.filter = async function(conn, tags, tables) {
   // find all table names and row ids that match the query
   const query = 'SELECT tableName, rowId FROM tags WHERE ' +
     (tables.length ? 'tableName in (' + tables.map(() => '?').join(', ') + ') AND ' : '') +
-    'tags in (' + tags.map(() => '?, ') + ') ' +
-    'GROUP BY tableName, rowId' +
+    'tag in (' + tags.map(() => '?').join(', ') + ') ' +
+    'GROUP BY tableName, rowId ' +
     'HAVING COUNT(tag) = ' + tags.length
-  const matches = await conn.query(query, [].concat(tags, tables))
+  const [ matches ] = await conn.query(query, [].concat(tags, tables))
 
   // organize row ids by table name
   const tableNames = {}
-  matches.results.forEach(row => {
+  matches.forEach(row => {
     const tableName = row.tableName;
     if (!tableNames[tableName]) tableNames[tableName] = []
     tableNames[tableName].push(row.rowId)
@@ -38,9 +53,16 @@ exports.filter = async function(conn, tags, tables) {
     const name = keys[i]
     const ids = tableNames[name]
     const query = 'SELECT id, title, description, timestamp FROM ' + name +
-      ' WHERE id IN (' + (ids.map('?').join(', ')) + ')'
-    const { results } = await conn.query(query, ids)
-    tableNames[name] = results
+      ' WHERE id IN (' + (ids.map(() => '?').join(', ')) + ')'
+    const [ rows ] = await conn.query(query, ids)
+    tableNames[name] = rows.map(v => {
+      return {
+        id: v.id,
+        title: v.title,
+        description: v.description,
+        timestamp: v.timestamp
+      }
+    })
   }
 
   return tableNames
@@ -57,27 +79,9 @@ exports.filter = async function(conn, tags, tables) {
 exports.set = async function(conn, tags, table, rowId) {
   await exports.delete(conn, table, rowId)
 
-  const promises = []
-  tags.forEach(tag => {
-    const promise = conn.query('INSERT INTO tags VALUES (?, ?, ?)', [tag, table, rowId])
-    promises.push(promise)
-  })
-
-  return Promise.all(promises)
+  const length = tags.length
+  for (let i = 0; i < length; i++) {
+    console.log(tags[i])
+    await conn.query('INSERT INTO tags VALUES (?, ?, ?)', [tags[i], table, rowId])
+  }
 }
-
-/**
- * Get a list of all tags
- * @param {object} conn
- * @param {string} [table]
- * @param {number} [id]
- * @returns {Promise<*>}
- */
-exports.tags = async function(conn, table, id) {
-  const query = 'SELECT DISTINCT tag FROM tags' +
-    (table ? ' WHERE table = ?' : '') +
-    (id ? ' AND rowId = ?' : '')
-  const { results } = await conn.query(query, [ table, id ])
-  return results
-}
-
