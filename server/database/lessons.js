@@ -26,14 +26,7 @@ exports.get = async function(conn, id) {
 
 exports.search = async function(conn, term) {
   const [ rows ] = await conn.query('SELECT id, title, description, timestamp FROM lessons WHERE title LIKE ? OR description LIKE ?', ['%' + term + '%', '%' + term + '%'])
-  return rows.map(v => {
-    return {
-      id: v.id,
-      title: v.title,
-      description: v.description,
-      timestamp: v.timestamp
-    }
-  })
+  return rows.map(v => Object.assign({}, v))
 }
 
 exports.update = async function(conn, id, data) {

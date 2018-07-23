@@ -55,14 +55,7 @@ exports.filter = async function(conn, tags, tables) {
     const query = 'SELECT id, title, description, timestamp FROM ' + name +
       ' WHERE id IN (' + (ids.map(() => '?').join(', ')) + ')'
     const [ rows ] = await conn.query(query, ids)
-    tableNames[name] = rows.map(v => {
-      return {
-        id: v.id,
-        title: v.title,
-        description: v.description,
-        timestamp: v.timestamp
-      }
-    })
+    tableNames[name] = rows.map(v => Object.assign({}, v))
   }
 
   return tableNames
