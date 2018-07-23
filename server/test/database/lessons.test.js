@@ -82,4 +82,16 @@ describe('database/lessons', () => {
     expect(data.lessons[0].id).to.equal(lessonId)
   })
 
+  it('can delete lesson which also deletes tags', async () => {
+    const deleted = await lessons.delete(conn, lessonId)
+    expect(deleted).to.equal(true)
+
+    const lesson = await lessons.get(conn, lessonId)
+    expect(lesson).to.equal(null)
+
+    const data = await tags.filter(conn, ['go', 'pogo'])
+    expect(data).to.have.ownProperty('lessons')
+    expect(data.lessons.length).to.equal(1)
+  })
+
 });

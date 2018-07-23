@@ -10,7 +10,7 @@ exports.add = async function(conn, title, description, lessonTags, content) {
 exports.delete = async function(conn, id) {
   const [ rows ] = await conn.query('DELETE FROM lessons WHERE id = ?', [id] )
   await tags.delete(conn, 'lessons', id)
-  return rows.changedRows > 0
+  return rows.affectedRows > 0
 }
 
 exports.get = async function(conn, id) {
