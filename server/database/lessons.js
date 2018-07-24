@@ -1,6 +1,8 @@
 'use strict'
 const tags    = require('./tags')
 
+// TODO: can edit, delete own lesson, can see, copy, reference other lessons
+
 exports.add = async function(conn, title, description, lessonTags, content) {
   const [ rows ] = await conn.query('INSERT INTO lessons (title, description, content) VALUES (?, ?, ?)', [title, description, content] )
   await tags.set(conn, lessonTags, 'lessons', rows.insertId)
