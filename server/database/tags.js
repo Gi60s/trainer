@@ -74,7 +74,6 @@ exports.set = async function(conn, tags, table, rowId) {
 
   const length = tags.length
   for (let i = 0; i < length; i++) {
-    console.log(tags[i])
     await conn.query('INSERT INTO tags VALUES (?, ?, ?)', [tags[i], table, rowId])
   }
 }
