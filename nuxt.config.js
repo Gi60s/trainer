@@ -63,8 +63,7 @@ const config = {
 
     // extend webpack configuration
     extend (config, { isDev, isClient, isServer }) {
-      config.devtool = 'eval-source-map';
-      // if (isClient) config.devtool = isDev ? 'eval-source-map' : 'source-map'
+      config.devtool = isDev ? 'eval-source-map' : 'source-map'
     },
 
     vendor: [
