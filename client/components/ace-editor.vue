@@ -31,6 +31,8 @@
       editor.on('change', () => {
         this.$emit('update', editor.getValue())
       })
+
+      this.ace = editor;
     }
 
   }
