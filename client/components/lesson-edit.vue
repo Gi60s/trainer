@@ -1,9 +1,49 @@
 <template>
   <div class="lesson-edit">
-    <div class="buttons">
-      <v-dialog v-model="dialog">
-        <v-btn color="secondary" slot="activator"><v-icon>settings</v-icon> Settings</v-btn>
-        <v-card>
+    <v-speed-dial v-model="fab" absolute bottom right direction="top" open-on-hover transition="slide-y-reverse-transition">
+
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none" slot="activator">
+        <v-btn slot="activator" v-model="fab" color="accent" fab>
+          <v-icon>edit</v-icon>
+          <v-icon>save</v-icon>
+        </v-btn>
+        <span>Save</span>
+      </v-tooltip>
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none" v-if="activeTab === 1">
+        <v-btn fab small dark color="secondary" slot="activator">
+          <v-icon>pause</v-icon>
+        </v-btn>
+        <span>Add Pause</span>
+      </v-tooltip>
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none" v-if="activeTab === 1">
+        <v-btn fab small dark color="secondary" slot="activator">
+          <v-icon>insert_drive_file</v-icon>
+        </v-btn>
+        <span>Add Page</span>
+      </v-tooltip>
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none">
+        <v-btn fab small dark color="secondary" slot="activator">
+          <v-icon>content_copy</v-icon>
+        </v-btn>
+        <span>Copy Lesson</span>
+      </v-tooltip>
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none">
+        <v-btn fab small dark color="error" slot="activator">
+          <v-icon>delete</v-icon>
+        </v-btn>
+        <span>Delete</span>
+      </v-tooltip>
+    </v-speed-dial>
+
+    <v-tabs v-model="activeTab" v-if="$byu.user">
+      <v-tab key="summary">Summary</v-tab>
+      <v-tab-item key="summary">
+        <v-card flat>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
@@ -19,35 +59,33 @@
               </v-layout>
             </v-container>
           </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="secondary" @click.native="dialog = false">Edit Content</v-btn>
-            <v-btn color="accent" :disabled="!modified" @click="save(); dialog=false"><v-icon>save</v-icon> Save</v-btn>
-          </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-tab-item>
 
-      <v-btn color="accent" :disabled="!modified" @click="save()"><v-icon>save</v-icon> Save</v-btn>
-    </div>
-    <div class="editor">
-      <!--<textarea :value="input" @input="update"></textarea>-->
-      <ace-editor class="ace-editor" language="markdown" :content="content" v-on:update="update"></ace-editor>
-      <div class="preview">
-        <div class="preview-nav" v-if="pages.length">
-          <v-btn color="secondary" :disabled="pageIndex === 0" @click="pageIndex--"><v-icon>chevron_left</v-icon></v-btn>
-          <v-menu offset-y>
-            <v-btn slot="activator" color="secondary" class="page-title-button">{{pageTitles[pageIndex]}}</v-btn>
-            <v-list>
-              <v-list-tile v-for="(title, index) in pageTitles" :key="index" @click="pageIndex = index">
-                <v-list-tile-title>{{ title }}</v-list-tile-title>
-              </v-list-tile>
-            </v-list>
-          </v-menu>
-          <v-btn color="secondary" :disabled="pageIndex + 1 >= pages.length" @click="pageIndex++"><v-icon>chevron_right</v-icon></v-btn>
+      <v-tab key="content">Content</v-tab>
+      <v-tab-item key="content">
+        <div class="editor">
+          <!--<textarea :value="input" @input="update"></textarea>-->
+          <ace-editor class="ace-editor" language="markdown" :content="content" v-on:update="update" ref="editor"></ace-editor>
+          <div class="preview">
+            <div class="preview-nav" v-if="pages.length">
+              <v-btn color="secondary" :disabled="pageIndex === 0" @click="pageIndex--"><v-icon>chevron_left</v-icon></v-btn>
+              <v-menu offset-y>
+                <v-btn slot="activator" color="secondary" class="page-title-button">{{pageTitles[pageIndex]}}</v-btn>
+                <v-list>
+                  <v-list-tile v-for="(title, index) in pageTitles" :key="index" @click="pageIndex = index">
+                    <v-list-tile-title>{{ title }}</v-list-tile-title>
+                  </v-list-tile>
+                </v-list>
+              </v-menu>
+              <v-btn color="secondary" :disabled="pageIndex + 1 >= pages.length" @click="pageIndex++"><v-icon>chevron_right</v-icon></v-btn>
+            </div>
+            <div class="preview-content" v-html="compiledMarkdown"></div>
+          </div>
         </div>
-        <div class="preview-content" v-html="compiledMarkdown"></div>
-      </div>
-    </div>
+      </v-tab-item>
+    </v-tabs>
+
   </div>
 </template>
 
@@ -72,6 +110,8 @@
     data() {
       const lesson = this.$store.state.lessons.current
       return {
+        activeTab: 0,
+        fab: false,
         content: lesson.content,
         description: lesson.description,
         dialog: false,
@@ -146,6 +186,14 @@
       updateTags(tags) {
         this.tags = tags
       }
+    },
+
+    watch: {
+      activeTab: function(val) {
+        if (val === 1) {
+          setTimeout(() => this.$refs.editor.ace.resize(), 500);
+        }
+      }
     }
 
   }
@@ -155,6 +203,15 @@
   .lesson-edit {
     position: relative;
     height: 100%;
+    padding-bottom: 48px;
+
+    .v-tabs {
+      height: 100%;
+
+      > :last-child {
+        height: 100%;
+      }
+    }
 
     .buttons {
       position: absolute;
