@@ -1,5 +1,30 @@
 <template>
   <v-form v-model="valid">
+    <v-speed-dial v-model="fab" absolute bottom right direction="top" open-on-hover transition="slide-y-reverse-transition">
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none" slot="activator">
+        <v-btn slot="activator" v-model="fab" color="accent" fab>
+          <v-icon>edit</v-icon>
+          <v-icon>save</v-icon>
+        </v-btn>
+        <span>Save</span>
+      </v-tooltip>
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none">
+        <v-btn fab small dark color="secondary" slot="activator">
+          <v-icon>content_copy</v-icon>
+        </v-btn>
+        <span>Copy Course</span>
+      </v-tooltip>
+
+      <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none">
+        <v-btn fab small dark color="error" slot="activator">
+          <v-icon>delete</v-icon>
+        </v-btn>
+        <span>Delete</span>
+      </v-tooltip>
+    </v-speed-dial>
+
     <v-container grid-list-md>
       <v-layout row wrap>
         <v-flex xs12>
@@ -31,15 +56,15 @@
         <v-flex xs12>
           <v-subheader class="section-label">Material</v-subheader>
           <div>
-            <v-btn color="secondary">
+            <v-btn color="secondary" class="action-button">
               <v-icon>add_circle</v-icon>
               Add a Lesson
             </v-btn>
-            <v-btn color="secondary">
+            <v-btn color="secondary" class="action-button">
               <v-icon>add_circle</v-icon>
               Add a Project
             </v-btn>
-            <v-btn color="secondary">
+            <v-btn color="secondary" class="action-button">
               <v-icon>add_circle</v-icon>
               Add a Quiz
             </v-btn>
@@ -86,6 +111,8 @@
 
       const result = {
         valid: false,
+
+        fab: false,
 
         data: course ? deepCopy(course) : this.getEmptyCourse(),
 
@@ -160,5 +187,9 @@
   .section-label {
     padding: 0;
     font-size: 16px;
+  }
+
+  .v-speed-dial--bottom {
+    bottom: 0;
   }
 </style>
