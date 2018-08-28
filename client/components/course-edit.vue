@@ -188,8 +188,4 @@
     padding: 0;
     font-size: 16px;
   }
-
-  .v-speed-dial--bottom {
-    bottom: 0;
-  }
 </style>
