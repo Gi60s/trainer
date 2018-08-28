@@ -42,7 +42,7 @@ const config = {
         ],
 
         // default site title (in title bar)
-        pageTitle: { pre: '', main: 'Personal Information', post: '' },
+        pageTitle: { pre: '', main: 'Code Trainer', post: '' },
 
         // how many milliseconds to wait before performing an automatic search - set to zero (0) to disable
         searchDebounce: 350,
