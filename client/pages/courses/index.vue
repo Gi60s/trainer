@@ -31,7 +31,7 @@
 
             <p v-if="!courses.length">There are no courses.</p>
             <v-list v-else two-line>
-              <v-list-tile v-for="(course, index) in courses">
+              <v-list-tile v-for="(course, index) in courses" :key="course.id">
                 <v-list-tile-avatar>
                   <v-icon v-if="course.joined" large color="success">check_circle</v-icon>
                   <v-icon v-else large>add_circle</v-icon>
@@ -51,7 +51,7 @@
     <div v-else>
       <p v-if="!courses.length">There are no courses.</p>
       <v-list v-else two-line>
-        <v-list-tile v-for="(course, index) in courses">
+        <v-list-tile v-for="(course, index) in courses" :key="course.id">
           <v-list-tile-content>
             <v-list-tile-title v-html="course.title"></v-list-tile-title>
             <v-list-tile-sub-title v-html="course.description"></v-list-tile-sub-title>
