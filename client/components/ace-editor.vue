@@ -26,7 +26,7 @@
       const editor = vue.ace.edit(this.$refs.editor)
       editor.getSession().setMode('ace/mode/' + this.language)
       editor.setTheme('ace/theme/' + this.theme)
-      editor.setValue(this.content)
+      editor.setValue(this.content, -1)
       editor.resize()
       editor.on('change', () => {
         this.$emit('update', editor.getValue())
