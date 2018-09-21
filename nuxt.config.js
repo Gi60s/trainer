@@ -52,10 +52,11 @@ const config = {
 
   // plugins to run before app initialization
   plugins: [
+    { src: '~/plugins/ace', ssr: false },
     { src: '~/plugins/byu', ssr: true },
     { src: '~/plugins/vuetify', ssr: true },
-    { src: '~/plugins/wabs', ssr: false },
-    { src: '~/plugins/ace', ssr: false }
+    { src: '~/plugins/toast', ssr: true },
+    { src: '~/plugins/wabs', ssr: false }
   ],
 
   // nuxt build configuration

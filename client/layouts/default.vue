@@ -1,5 +1,10 @@
 <template>
     <div>
+        <v-snackbar v-model="toast.visible" top :timeout="toast.duration" :color="toast.color">
+            {{ toast.message }}
+            <v-btn flat @click="toast.visible = false">Close</v-btn>
+        </v-snackbar>
+
         <byu-header constrain-top-bar>
 
             <!-- site title -->
@@ -44,45 +49,69 @@
 </template>
 
 <script>
-    const rxExternalUrl = /https?:\/\//;
+  const rxExternalUrl = /https?:\/\//;
 
-    export default {
-        computed: {
-            hasNavigation () {
-                return this.navigationLinks.length > 0;
-            },
-            hasSubtitle () {
-                const title = this.pageTitle;
-                return title.pre || title.post || false;
-            },
-            navigationLinks () {
-                return this.$store.state.byu.navigationLinks;
-            },
-            searchEnabled () {
-                return !this.$byu.search.disabled;
-            },
-            searchValue () {
-                return this.$byu.search.value;
-            },
-            pageTitle () {
-                return this.$store.state.byu.pageTitle;
-            },
-            user () {
-                return this.$store.state.wabs.user;
-            }
-        },
-        methods: {
-            isLocalLink (value) {
-                return !rxExternalUrl.test(value)
-            },
-            searchSubmit () {
-                this.$byu.search.submit(this.searchValue, false);
-            },
-            searchUpdate (e) {
-                this.$byu.search.value = e.target.value;
-            }
+  export default {
+
+    data() {
+      const data = {
+        toast: {
+          message: '',
+          color: 'default',
+          duration: 4000,
+          visible: false
         }
+      }
+      this.$root.$on('toast', payload => {
+        if (payload.message) {
+          data.toast.message = payload.message
+          data.toast.color = payload.color || 'default'
+          data.toast.duration = payload.duration || 4000
+          data.toast.visible = true
+        } else {
+          data.toast.visible = false
+        }
+        console.log(data.toast)
+      })
+      return data
+    },
+
+    computed: {
+      hasNavigation () {
+        return this.navigationLinks.length > 0;
+      },
+      hasSubtitle () {
+        const title = this.pageTitle;
+        return title.pre || title.post || false;
+      },
+      navigationLinks () {
+        return this.$store.state.byu.navigationLinks;
+      },
+      searchEnabled () {
+        return !this.$byu.search.disabled;
+      },
+      searchValue () {
+        return this.$byu.search.value;
+      },
+      pageTitle () {
+        return this.$store.state.byu.pageTitle;
+      },
+      user () {
+        return this.$store.state.wabs.user;
+      }
+    },
+    methods: {
+      isLocalLink (value) {
+        return !rxExternalUrl.test(value)
+      },
+      searchSubmit () {
+        this.$byu.search.submit(this.searchValue, false);
+      },
+      searchUpdate (e) {
+        this.$byu.search.value = e.target.value;
+      }
     }
+  }
 </script>
 
 <style scoped>
