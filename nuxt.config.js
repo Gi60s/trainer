@@ -69,6 +69,7 @@ const config = {
 
     vendor: [
       'axios',  // add axios globally
+      'vuetify'
     ]
   }
 };
