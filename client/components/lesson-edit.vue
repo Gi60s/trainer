@@ -212,7 +212,10 @@
     watch: {
       activeTab: function(val) {
         if (val === 1) {
-          setTimeout(() => this.$refs.editor.ace.resize(), 500);
+          setTimeout(() => {
+            this.ace.resize()
+            this.ace.focus()
+          }, 500);
         }
       }
     }
