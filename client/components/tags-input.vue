@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-select v-model="chips" label="Tags" chips tags solo prepend-icon="filter_list" append-icon="" clearable v-on:input="tagsChanged">
+    <v-combobox v-model="chips" label="Tags" chips tags solo multiple prepend-icon="filter_list" append-icon="" clearable v-on:input="tagsChanged">
       <template slot="selection" slot-scope="data">
         <v-chip :selected="data.selected" close @input="remove(data.item)">{{ data.item }}</v-chip>
       </template>
-    </v-select>
+    </v-combobox>
   </div>
 </template>
 
