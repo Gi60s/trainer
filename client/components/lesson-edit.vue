@@ -1,10 +1,15 @@
 <template>
   <div class="lesson-edit">
-    <v-speed-dial v-model="fab" absolute bottom right direction="top" open-on-hover transition="slide-y-reverse-transition">
 
+    <div v-if="!$byu.user">
+      <p>You must be signed in to use this page</p>
+      <p><v-btn color="accent" @click="$byu.auth.login()">Please sign in</v-btn></p>
+    </div>
+
+    <v-speed-dial v-model="fab" absolute bottom right direction="top" open-on-hover transition="slide-y-reverse-transition" v-if="$byu.user">
 
       <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none" slot="activator">
-        <v-btn slot="activator" v-model="fab" color="accent" fab>
+        <v-btn slot="activator" v-model="fab" color="accent" fab @click="save()">
           <v-icon>edit</v-icon>
           <v-icon>save</v-icon>
         </v-btn>
@@ -12,14 +17,14 @@
       </v-tooltip>
 
       <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none" v-if="activeTab === 1">
-        <v-btn fab small dark color="secondary" slot="activator">
+        <v-btn fab small dark color="secondary" slot="activator" @click="addContent('\n\n--\n\n')">
           <v-icon>pause</v-icon>
         </v-btn>
         <span>Add Pause</span>
       </v-tooltip>
 
       <v-tooltip left open-on-hover open-delay="0" close-delay="0" transition="none" v-if="activeTab === 1">
-        <v-btn fab small dark color="secondary" slot="activator">
+        <v-btn fab small dark color="secondary" slot="activator" @click="addContent('\n\n==\n\n')">
           <v-icon>insert_drive_file</v-icon>
         </v-btn>
         <span>Add Page</span>
@@ -48,7 +53,7 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field v-model="title" label="Title" required></v-text-field>
+                  <v-text-field v-model="title" label="Title" :rules="[rules.required]"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field v-model="description" label="Description"></v-text-field>
@@ -85,7 +90,6 @@
         </div>
       </v-tab-item>
     </v-tabs>
-
   </div>
 </template>
 
@@ -125,11 +129,17 @@
         pages: [],
         pageIndex: 0,
         tags: lesson.tags,
-        title: lesson.title
+        title: lesson.title,
+        rules: {
+          required: value => !!value || 'Required'
+        }
       }
     },
 
     computed: {
+      ace() {
+        return this.$refs.editor.ace
+      },
 
       compiledMarkdown() {
         if (this.pages.length && this.content) {
@@ -156,18 +166,29 @@
     },
 
     methods: {
+      addContent(text) {
+        const editor = this.ace
+        editor.session.insert(editor.getCursorPosition(), text)
+        editor.focus()
+      },
+
       debouncedUpdate: _.debounce(function() {
         this.update(this.content)
       }, 300),
 
       save() {
-        this.$store.dispatch('lessons/save', {
-          content: this.content,
-          description: this.description,
-          id: this.id,
-          tags: this.tags,
-          title: this.title
-        });
+        if (!this.title) {
+          this.activeTab = 0
+          this.$toast('Missing required field: Title', 'error')
+        } else {
+          this.$store.dispatch('lessons/save', {
+            content: this.content,
+            description: this.description,
+            id: this.id,
+            tags: this.tags,
+            title: this.title
+          });
+        }
       },
 
       update(value) {
