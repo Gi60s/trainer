@@ -58,15 +58,7 @@
           <div>
             <v-btn color="secondary" class="action-button">
               <v-icon>add_circle</v-icon>
-              Add a Lesson
-            </v-btn>
-            <v-btn color="secondary" class="action-button">
-              <v-icon>add_circle</v-icon>
-              Add a Project
-            </v-btn>
-            <v-btn color="secondary" class="action-button">
-              <v-icon>add_circle</v-icon>
-              Add a Quiz
+              Add Content
             </v-btn>
           </div>
           <v-list two-line>
@@ -85,10 +77,13 @@
         </v-flex>
       </v-layout>
     </v-container>
+
+    <content-select></content-select>
   </v-form>
 </template>
 
 <script>
+  import ContentSelect from './content-select'
   import { deepCopy } from '~/assets/js/util'
   import draggable from 'vuedraggable'
   import tagsInput from '~/components/tags-input'
@@ -96,6 +91,7 @@
   export default {
 
     components: {
+      'content-select': ContentSelect,
       draggable,
       'tags-input': tagsInput
     },
